@@ -52,6 +52,38 @@ public readonly struct ValueResult<T, E> : IUnion
     public bool IsOk => isOk;
     public bool IsError => !isOk;
 
+    public bool HasValue => true;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool TryGetValue([NotNullWhen(true)] out T? value)
+    {
+        if (isOk)
+        {
+            value = this.value!;
+            return true;
+        }
+        else
+        {
+            value = default;
+            return false;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool TryGetValue([NotNullWhen(true)] out E? value)
+    {
+        if (!isOk)
+        {
+            value = error!;
+            return true;
+        }
+        else
+        {
+            value = default;
+            return false;
+        }
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public T GetValue()
     {
